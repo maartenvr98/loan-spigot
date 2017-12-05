@@ -1,4 +1,4 @@
-package nl.maartenvr98.loan.getloan;
+package nl.maartenvr98.loan.refund;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -9,8 +9,8 @@ public class Refund {
     private FileConfiguration config;
 
     public Refund(Plugin plugin, FileConfiguration config) {
-        plugin = plugin;
-        config = config;
+        this.plugin = plugin;
+        this.config = config;
     }
 
 }

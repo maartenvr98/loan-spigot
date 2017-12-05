@@ -1,15 +1,12 @@
 package nl.maartenvr98.loan.commands;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import nl.maartenvr98.loan.getloan.Loan;
-import nl.maartenvr98.loan.getloan.Refund;
+import nl.maartenvr98.loan.refund.Refund;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import static java.lang.Double.parseDouble;
 
@@ -17,7 +14,6 @@ public class Commands implements CommandExecutor {
 
     private Plugin plugin;
     private FileConfiguration config;
-    private Economy econ = null;
     private Loan loan;
     private Refund refund;
 
@@ -26,11 +22,6 @@ public class Commands implements CommandExecutor {
         this.config = config;
         this.loan = new Loan(plugin, config);
         this.refund = new Refund(plugin, config);
-
-        if (!setupEconomy() ) {
-            plugin.getLogger().info("Disabled due to no Vault dependency found!");
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
-        }
     }
 
     @Override
@@ -56,24 +47,8 @@ public class Commands implements CommandExecutor {
                         if(!isInteger(args[0])) {
                             p.sendMessage(config.getString("messages.invalid"));
                         }
-                        String path = "loans."+p.getUniqueId();
-                        if(!config.isSet(path)) {
-                            if(parseDouble(args[0]) > config.getDouble("maxloan")) {
-                                p.sendMessage(config.getString("messages.maxloan"));
-                            }
-                            else {
-                                EconomyResponse response = econ.depositPlayer(p, parseDouble(args[0]));
-                                if(response.transactionSuccess()) {
-                                    config.set(path, parseDouble(args[0]));
-                                    plugin.saveConfig();
-                                }
-                                else {
-                                    p.sendMessage(response.errorMessage);
-                                }
-                            }
-                        }
                         else {
-                            p.sendMessage(config.getString("messages.limit"));
+                            loan.create(p, parseDouble(args[0]));
                         }
                 }
             }
@@ -102,17 +77,5 @@ public class Commands implements CommandExecutor {
             if(Character.digit(s.charAt(i),radix) < 0) return false;
         }
         return true;
-    }
-
-    public boolean setupEconomy() {
-        if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        econ = rsp.getProvider();
-        return econ != null;
     }
 }

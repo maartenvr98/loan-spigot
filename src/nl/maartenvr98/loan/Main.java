@@ -1,12 +1,15 @@
 package nl.maartenvr98.loan;
 
+import net.milkbowl.vault.economy.Economy;
 import nl.maartenvr98.loan.commands.Commands;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
-    FileConfiguration config = getConfig();
+    public FileConfiguration config = getConfig();
+    public Economy econ = null;
 
     @Override
     public void onEnable() {
@@ -22,6 +25,11 @@ public class Main extends JavaPlugin {
         saveConfig();
 
         getCommand("lening").setExecutor(new Commands(this, config));
+
+        if (!setupEconomy() ) {
+            this.getLogger().info("Disabled due to no Vault dependency found!");
+            this.getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override
@@ -29,4 +37,19 @@ public class Main extends JavaPlugin {
         getLogger().info("Plugin disabled");
     }
 
+    public Economy getEconomy() {
+        return econ;
+    }
+
+    public boolean setupEconomy() {
+        if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
 }
