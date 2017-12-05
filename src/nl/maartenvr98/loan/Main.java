@@ -21,6 +21,10 @@ public class Main extends JavaPlugin {
         config.addDefault("messages.maxloan", "&cJe kan niet meer dan 1000 lenen");
         config.addDefault("messages.no-permission", "&cJe hebt geen toegang tot dit command");
         config.addDefault("messages.invalid", "&cInvalid arguments");
+        config.addDefault("messages.success", "&aLening van {loan_amount} ontvangen");
+        config.addDefault("messages.no-loan", "&cJe hebt geen lening");
+        config.addDefault("messages.paid", "&a Je hebt {amount} betaald");
+        config.addDefault("messages.fullpaid", "&aGefeliciteerd. Je hebt lening afbetaald!");
         config.options().copyDefaults(true);
         saveConfig();
 

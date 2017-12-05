@@ -2,10 +2,16 @@ package nl.maartenvr98.loan.getloan;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static javax.xml.bind.DatatypeConverter.parseString;
 
 public class Loan {
 
@@ -29,13 +35,15 @@ public class Loan {
         String path = "loans."+p.getUniqueId();
         if(!config.isSet(path)) {
             if(amount > maxloan) {
-                p.sendMessage(config.getString("messages.maxloan"));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.maxloan")));
             }
             else {
                 EconomyResponse response = econ.depositPlayer(p, amount);
                 if(response.transactionSuccess()) {
-                    config.set(path, amount);
+                    config.set(path+".amount", amount);
+                    config.set(path+".time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                     plugin.saveConfig();
+                    p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.success").replace("{loan_amount}", String.valueOf(amount))));
                 }
                 else {
                     p.sendMessage(response.errorMessage);
@@ -43,7 +51,7 @@ public class Loan {
             }
         }
         else {
-            p.sendMessage(config.getString("messages.limit"));
+            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.limit")));
         }
     }
 

@@ -2,6 +2,7 @@ package nl.maartenvr98.loan.commands;
 
 import nl.maartenvr98.loan.getloan.Loan;
 import nl.maartenvr98.loan.refund.Refund;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,38 +29,79 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String s, String[] args) {
         if(sender instanceof Player) {
             Player p = (Player) sender;
-            if(s.equalsIgnoreCase("lening")) {
+            if(args.length >= 1) {
                 switch (args[0]) {
                     case "help":
                     case "?":
                         sendHelp(p);
                         break;
                     case "about":
-                        p.sendMessage("§aLoan plugin by maartenvr98 <https://www.spigotmc.org/members/maartenvr98.88681/>");
+                        p.sendMessage("§aLoan plugin by maartenvr98\nhttps://www.spigotmc.org/members/maartenvr98.88681/");
                         break;
                     case "admin":
                         if(!p.hasPermission("loan.admin")) {
-                            p.sendMessage(config.getString("messages.no-permission"));
-                            return false;
+                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.no-permission")));
+                            return true;
                         }
-                        break;
-                    default:
-                        if(!isInteger(args[0])) {
-                            p.sendMessage(config.getString("messages.invalid"));
+                        if(args.length == 1) {
+                            sendAdminHelp(p);
                         }
                         else {
-                            loan.create(p, parseDouble(args[0]));
+                            switch (args[1]) {
+                                case "reload":
+                                    plugin.reloadConfig();
+                                    break;
+                                default:
+                                    sendAdminHelp(p);
+                            }
                         }
+                        break;
+                    case "get":
+                        if(args.length == 1) {
+                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                            return true;
+                        }
+                        else {
+                            if(!isInteger(args[1])) {
+                                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                            }
+                            else {
+                                loan.create(p, parseDouble(args[1]));
+                            }
+                        }
+                        break;
+                    case "refund":
+                        if(args.length == 1) {
+                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                            return true;
+                        }
+                        else {
+                            if(!isInteger(args[1])) {
+                                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                            }
+                            else {
+                                refund.pay(p, parseDouble(args[1]));
+                            }
+                        }
+                    default:
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
                 }
+            }
+            else {
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
             }
         }
         else {
             plugin.getLogger().info("You need to be an actual player");
         }
-        return false;
+        return true;
     }
 
     public void sendHelp(Player p) {
+
+    }
+
+    public void sendAdminHelp(Player p) {
 
     }
 
