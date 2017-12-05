@@ -3,6 +3,7 @@ package nl.maartenvr98.loan.commands;
 import nl.maartenvr98.loan.getloan.Loan;
 import nl.maartenvr98.loan.refund.Refund;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,35 +36,53 @@ public class Commands implements CommandExecutor {
                     case "?":
                         sendHelp(p);
                         break;
+                    case "over":
                     case "about":
                         p.sendMessage("§aLoan plugin by maartenvr98\nhttps://www.spigotmc.org/members/maartenvr98.88681/");
                         break;
                     case "admin":
-                        if(!p.hasPermission("loan.admin")) {
-                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.no-permission")));
-                            return true;
-                        }
-                        if(args.length == 1) {
-                            sendAdminHelp(p);
+                        if(p.hasPermission("loan.admin") || p.isOp()) {
+                            if(args.length == 1) {
+                                sendAdminHelp(p);
+                            }
+                            else {
+                                switch (args[1]) {
+                                    case "reload":
+                                        plugin.reloadConfig();
+                                        break;
+                                    case "set":
+
+                                        break;
+                                    case "remove":
+                                        if(args.length == 3) {
+                                            Player player = plugin.getServer().getPlayer(args[2]);
+                                            if(player == null) {
+                                                sendLine(p, config.getString("messages.player-not-online"));
+                                            }
+                                            config.set("loans."+player.getUniqueId(), null);
+                                            plugin.saveConfig();
+                                            sendLine(player, config.getString("messages.loan-remitted"));
+                                            sendLine(p, config.getString("messages.loan-removed"));
+                                        }
+                                        break;
+                                    default:
+                                        sendAdminHelp(p);
+                                }
+                            }
                         }
                         else {
-                            switch (args[1]) {
-                                case "reload":
-                                    plugin.reloadConfig();
-                                    break;
-                                default:
-                                    sendAdminHelp(p);
-                            }
+                            sendLine(p, config.getString("messages.no-permission"));
+                            return true;
                         }
                         break;
                     case "get":
                         if(args.length == 1) {
-                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                            sendLine(p, config.getString("messages.invalid"));
                             return true;
                         }
                         else {
                             if(!isInteger(args[1])) {
-                                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                                sendLine(p, config.getString("messages.invalid"));
                             }
                             else {
                                 loan.create(p, parseDouble(args[1]));
@@ -72,23 +91,23 @@ public class Commands implements CommandExecutor {
                         break;
                     case "refund":
                         if(args.length == 1) {
-                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                            sendLine(p, config.getString("messages.invalid"));
                             return true;
                         }
                         else {
                             if(!isInteger(args[1])) {
-                                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                                sendLine(p, config.getString("messages.invalid"));
                             }
                             else {
                                 refund.pay(p, parseDouble(args[1]));
                             }
                         }
                     default:
-                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                        sendLine(p, config.getString("messages.invalid"));
                 }
             }
             else {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.invalid")));
+                sendLine(p, config.getString("messages.invalid"));
             }
         }
         else {
@@ -103,6 +122,10 @@ public class Commands implements CommandExecutor {
 
     public void sendAdminHelp(Player p) {
 
+    }
+
+    public void sendLine(Player p, String text) {
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&', text));
     }
 
     public static boolean isInteger(String s) {

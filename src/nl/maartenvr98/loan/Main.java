@@ -25,6 +25,9 @@ public class Main extends JavaPlugin {
         config.addDefault("messages.no-loan", "&cJe hebt geen lening");
         config.addDefault("messages.paid", "&a Je hebt {amount} betaald");
         config.addDefault("messages.fullpaid", "&aGefeliciteerd. Je hebt lening afbetaald!");
+        config.addDefault("messages.player-not-online", "&cDeze speler is niet online");
+        config.addDefault("messages.loan-remitted", "&aJe lening is kwijtgescholden");
+        config.addDefault("messages.loan-removed", "&aLening is verwijderd");
         config.options().copyDefaults(true);
         saveConfig();
 
