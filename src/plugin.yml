@@ -3,6 +3,7 @@ main: nl.maartenvr98.loan.Main
 version: 1.0
 author: maartenvr98
 description: Loan plugin
+depend: [Vault]
 commands:
   lening:
     description: Get a loan

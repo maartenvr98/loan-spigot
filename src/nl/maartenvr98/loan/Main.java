@@ -1,5 +1,6 @@
 package nl.maartenvr98.loan;
 
+import nl.maartenvr98.loan.commands.Commands;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,7 +21,7 @@ public class Main extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
 
-        getCommand("lening").setExecutor(new Command(this, config));
+        getCommand("lening").setExecutor(new Commands(this, config));
     }
 
     @Override

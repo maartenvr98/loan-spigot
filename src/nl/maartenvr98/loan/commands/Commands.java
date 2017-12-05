@@ -1,7 +1,9 @@
-package nl.maartenvr98.loan;
+package nl.maartenvr98.loan.commands;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import nl.maartenvr98.loan.getloan.Loan;
+import nl.maartenvr98.loan.getloan.Refund;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,15 +13,20 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import static java.lang.Double.parseDouble;
 
-public class Command implements CommandExecutor {
+public class Commands implements CommandExecutor {
 
-    Plugin plugin;
-    FileConfiguration config;
+    private Plugin plugin;
+    private FileConfiguration config;
     private Economy econ = null;
+    private Loan loan;
+    private Refund refund;
 
-    public Command(Plugin plugin, FileConfiguration config) {
-        this.config = config;
+    public Commands(Plugin plugin, FileConfiguration config) {
         this.plugin = plugin;
+        this.config = config;
+        this.loan = new Loan(plugin, config);
+        this.refund = new Refund(plugin, config);
+
         if (!setupEconomy() ) {
             plugin.getLogger().info("Disabled due to no Vault dependency found!");
             plugin.getServer().getPluginManager().disablePlugin(plugin);
@@ -35,6 +42,9 @@ public class Command implements CommandExecutor {
                     case "help":
                     case "?":
                         sendHelp(p);
+                        break;
+                    case "about":
+                        p.sendMessage("§aLoan plugin by maartenvr98 <https://www.spigotmc.org/members/maartenvr98.88681/>");
                         break;
                     case "admin":
                         if(!p.hasPermission("loan.admin")) {
