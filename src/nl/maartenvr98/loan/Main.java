@@ -6,6 +6,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class Main extends JavaPlugin {
 
     public FileConfiguration config = getConfig();
@@ -23,11 +28,27 @@ public class Main extends JavaPlugin {
         config.addDefault("messages.invalid", "&cInvalid arguments");
         config.addDefault("messages.success", "&aLening van {loan_amount} ontvangen");
         config.addDefault("messages.no-loan", "&cJe hebt geen lening");
+        config.addDefault("messages.loan", "&cJe hebt een lening van {money} en je hebt al {money_refund} afbetaald en je moet nog {money_left} betalen");
         config.addDefault("messages.paid", "&a Je hebt {amount} betaald");
         config.addDefault("messages.fullpaid", "&aGefeliciteerd. Je hebt lening afbetaald!");
+        config.addDefault("messages.has-loan", "&cDeze speler heeft al een lening");
         config.addDefault("messages.player-not-online", "&cDeze speler is niet online");
+        config.addDefault("messages.loan-loan-set", "&aLening gegeven aan {player}");
         config.addDefault("messages.loan-remitted", "&aJe lening is kwijtgescholden");
         config.addDefault("messages.loan-removed", "&aLening is verwijderd");
+
+        List<String> help = new ArrayList();
+        help.add("&c/lening help");
+        help.add("&c/lening aanvragen <bedrag>");
+        help.add("&c/lening afbetalen <bedrag>");
+        config.addDefault("messages.help", help);
+
+        List<String> adminhelp = new ArrayList();
+        adminhelp.add("&c/lening admin help");
+        adminhelp.add("&c/lening admin set <speler> <bedrag>");
+        adminhelp.add("&c/lening admin remove <speler>");
+        config.addDefault("messages.adminhelp", adminhelp);
+
         config.options().copyDefaults(true);
         saveConfig();
 

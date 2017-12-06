@@ -1,6 +1,5 @@
 package nl.maartenvr98.loan.refund;
 
-import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
@@ -8,6 +7,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class Refund {
 
@@ -49,6 +52,8 @@ public class Refund {
                 if(response.transactionSuccess()) {
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.paid").replace("{amount}", String.valueOf(amount))));
                     config.set(path+".amount", new_amount);
+                    List<String> configlist = (List<String>) config.getList(path+".refunds");
+                    configlist.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + ":" + amount);
                     plugin.saveConfig();
                 }
                 else {

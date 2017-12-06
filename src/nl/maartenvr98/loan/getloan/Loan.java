@@ -9,9 +9,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
-import static javax.xml.bind.DatatypeConverter.parseString;
 
 public class Loan {
 
@@ -40,8 +39,10 @@ public class Loan {
             else {
                 EconomyResponse response = econ.depositPlayer(p, amount);
                 if(response.transactionSuccess()) {
+                    config.set(path+".total", amount);
                     config.set(path+".amount", amount);
                     config.set(path+".time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    config.set(path+".refunds", new ArrayList<String>());
                     plugin.saveConfig();
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.success").replace("{loan_amount}", String.valueOf(amount))));
                 }
