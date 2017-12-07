@@ -41,6 +41,7 @@ public class Refund {
                 EconomyResponse response = econ.withdrawPlayer(p, amount);
                 if(response.transactionSuccess()) {
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.fullpaid")));
+                    String total = config.getString(path+".total");
                     config.set(path+".paid", true);
                     config.set(path+".total", 0);
                     config.set(path+".amount", 0);
@@ -48,7 +49,7 @@ public class Refund {
                     config.set(path+".refunds", new ArrayList());
 
                     List<String> history = (List<String>) config.getList(path+".history");
-                    history.add(new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ":" + amount);
+                    history.add(new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ":" + total);
                     config.set(path+".history", history);
 
                     plugin.saveConfig();

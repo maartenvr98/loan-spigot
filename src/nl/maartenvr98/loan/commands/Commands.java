@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -135,7 +136,17 @@ public class Commands implements CommandExecutor {
                                                 sendLine(p, config.getString("messages.player-not-online"));
                                             }
                                             else {
-                                                config.set("loans."+player.getUniqueId(), null);
+                                                String path = "loans."+p.getUniqueId();
+                                                String total = config.getString(path+".total");
+                                                config.set(path+".paid", true);
+                                                config.set(path+".total", 0);
+                                                config.set(path+".amount", 0);
+                                                config.set(path+".time", "");
+                                                config.set(path+".refunds", new ArrayList());
+
+                                                List<String> history = (List<String>) config.getList(path+".history");
+                                                history.add(new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ":" + total);
+                                                config.set(path+".history", history);
                                                 plugin.saveConfig();
                                                 sendLine(player, config.getString("messages.loan-remitted"));
                                                 sendLine(p, config.getString("messages.loan-removed"));
