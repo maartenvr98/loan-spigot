@@ -78,8 +78,13 @@ public class Commands implements CommandExecutor {
                                                 sendLine(p, config.getString("messages.player-not-online"));
                                             }
                                             else {
+                                                String path = "loans."+p.getUniqueId()+".history";
+                                                if(!config.isSet(path)) {
+                                                    sendLine(p, config.getString("messages.no-loan-player"));
+                                                    return true;
+                                                }
                                                 sendLine(p, config.getString("messages.loan-overview-header"));
-                                                List<String> loans = (List<String>) config.getList("loans"+p.getUniqueId()+".history");
+                                                List<String> loans = (List<String>) config.getList(path);
                                                 for (String loan: loans) {
                                                     String[] items = loan.split(":");
                                                     sendLine(p, config.getString("messages.loan-overview-line-player").replace("{date}", items[0]).replace("{amount}", items[1]));
