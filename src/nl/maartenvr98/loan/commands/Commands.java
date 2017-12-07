@@ -62,6 +62,7 @@ public class Commands implements CommandExecutor {
                                     case "help":
                                     case "?":
                                         sendAdminHelp(p);
+                                        break;
                                     case "reload":
                                         plugin.reloadConfig();
                                         sendLine(p, config.getString("messages.reload"));
