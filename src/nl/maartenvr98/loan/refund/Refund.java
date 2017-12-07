@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,8 +40,17 @@ public class Refund {
             if(new_amount == 0) {
                 EconomyResponse response = econ.withdrawPlayer(p, amount);
                 if(response.transactionSuccess()) {
-                    p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("fullpaid")));
-                    config.set(path, null);
+                    p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.fullpaid")));
+                    config.set(path+".paid", true);
+                    config.set(path+".total", 0);
+                    config.set(path+".amount", 0);
+                    config.set(path+".time", "");
+                    config.set(path+".refunds", new ArrayList());
+
+                    List<String> history = (List<String>) config.getList(path+".history");
+                    history.add(new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ":" + amount);
+                    config.set(path+".history", history);
+
                     plugin.saveConfig();
                 }
                 else {
@@ -52,8 +62,8 @@ public class Refund {
                 if(response.transactionSuccess()) {
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.paid").replace("{amount}", String.valueOf(amount))));
                     config.set(path+".amount", new_amount);
-                    List<String> configlist = (List<String>) config.getList(path+".refunds");
-                    configlist.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + ":" + amount);
+                    List<String> refunds = (List<String>) config.getList(path+".refunds");
+                    refunds.add(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()) + " - " + amount);
                     plugin.saveConfig();
                 }
                 else {

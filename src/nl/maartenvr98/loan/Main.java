@@ -22,14 +22,15 @@ public class Main extends JavaPlugin {
 
         config.addDefault("limit", 1);
         config.addDefault("maxloan", 1000);
+        config.addDefault("messages.reload", "&aConfig herladen");
         config.addDefault("messages.limit", "&cJe kan niet meer dan 1 lening hebben");
         config.addDefault("messages.maxloan", "&cJe kan niet meer dan 1000 lenen");
         config.addDefault("messages.no-permission", "&cJe hebt geen toegang tot dit command");
         config.addDefault("messages.invalid", "&cInvalid arguments");
         config.addDefault("messages.success", "&aLening van {loan_amount} ontvangen");
-        config.addDefault("messages.no-loan", "&cJe hebt geen lening");
+        config.addDefault("messages.no-loan", "&aJe hebt geen lening");
         config.addDefault("messages.loan", "&cJe hebt een lening van {money} en je hebt al {money_refund} afbetaald en je moet nog {money_left} betalen");
-        config.addDefault("messages.paid", "&a Je hebt {amount} betaald");
+        config.addDefault("messages.paid", "&aJe hebt {amount} betaald");
         config.addDefault("messages.fullpaid", "&aGefeliciteerd. Je hebt lening afbetaald!");
         config.addDefault("messages.has-loan", "&cDeze speler heeft al een lening");
         config.addDefault("messages.player-not-online", "&cDeze speler is niet online");
@@ -38,16 +39,21 @@ public class Main extends JavaPlugin {
         config.addDefault("messages.loan-removed", "&aLening is verwijderd");
 
         List<String> help = new ArrayList();
-        help.add("&c/lening help");
-        help.add("&c/lening aanvragen <bedrag>");
-        help.add("&c/lening afbetalen <bedrag>");
+        help.add("&a/lening help");
+        help.add("&a/lening aanvragen <bedrag>");
+        help.add("&a/lening afbetalen <bedrag>");
         config.addDefault("messages.help", help);
 
         List<String> adminhelp = new ArrayList();
-        adminhelp.add("&c/lening admin help");
-        adminhelp.add("&c/lening admin set <speler> <bedrag>");
-        adminhelp.add("&c/lening admin remove <speler>");
+        adminhelp.add("&a/lening admin help");
+        adminhelp.add("&a/lening admin set <speler> <bedrag>");
+        adminhelp.add("&a/lening admin remove <speler>");
         config.addDefault("messages.adminhelp", adminhelp);
+
+
+        config.addDefault("messages.loan-overview-header", "&7------&aAlle leningen&7------");
+        config.addDefault("messages.loan-overview-line", "&a{player} heeft een lening van {amount}");
+        config.addDefault("messages.loan-overview-line-player", "&a{date} = {amount}");
 
         config.options().copyDefaults(true);
         saveConfig();

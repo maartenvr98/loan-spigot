@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static java.lang.Double.parseDouble;
+
 public class Loan {
 
     private Plugin plugin;
@@ -30,19 +32,35 @@ public class Loan {
         }
     }
 
+    private boolean check(Player p) {
+        if(config.isSet("loans."+p.getUniqueId())) {
+            if(config.getBoolean("loans."+p.getUniqueId()+".paid")) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
     public void create(Player p, Double amount) {
         String path = "loans."+p.getUniqueId();
-        if(!config.isSet(path)) {
+        if(check(p)) {
             if(amount > maxloan) {
                 p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.maxloan")));
             }
             else {
                 EconomyResponse response = econ.depositPlayer(p, amount);
                 if(response.transactionSuccess()) {
+                    config.set(path+".paid", false);
                     config.set(path+".total", amount);
                     config.set(path+".amount", amount);
                     config.set(path+".time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                    config.set(path+".refunds", new ArrayList<String>());
+                    if(!config.isSet(path+".refunds")) {
+                        config.set(path+".refunds", new ArrayList());
+                    }
+                    if(!config.isSet(path+".history")) {
+                        config.set(path+".history", new ArrayList());
+                    }
                     plugin.saveConfig();
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.success").replace("{loan_amount}", String.valueOf(amount))));
                 }
@@ -54,6 +72,23 @@ public class Loan {
         else {
             p.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("messages.limit")));
         }
+    }
+
+    public void get(Player p) {
+        String path = "loans."+p.getUniqueId();
+        if(!config.isSet(path)) {
+            sendLine(p, config.getString("messages.no-loan"));
+        }
+        else {
+            String money = config.getString("loans."+p.getUniqueId()+".total");
+            String money_left = config.getString("loans."+p.getUniqueId()+".amount");
+            Double money_refund = parseDouble(money) - parseDouble(money_left);
+            sendLine(p, config.getString("messages.loan").replace("{money}", money).replace("{money_left}", money_left).replace("{money_refund}", String.valueOf(money_refund)));
+        }
+    }
+
+    public void sendLine(Player p, String text) {
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&', text));
     }
 
     public boolean setupEconomy() {

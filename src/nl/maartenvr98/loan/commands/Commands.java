@@ -42,131 +42,149 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String s, String[] args) {
         if(sender instanceof Player) {
             Player p = (Player) sender;
-            switch (args[0]) {
-                case "help":
-                case "?":
-                    sendHelp(p);
-                    break;
-                case "over":
-                case "about":
-                    p.sendMessage("§aLoan plugin by maartenvr98\nhttps://www.spigotmc.org/members/maartenvr98.88681/");
-                    break;
-                case "admin":
-                    if(p.hasPermission("loan.admin") || p.isOp()) {
-                        if(args.length == 1) {
-                            sendAdminHelp(p);
-                        }
-                        else {
-                            switch (args[1]) {
-                                case "help":
-                                case "?":
-                                    sendAdminHelp(p);
-                                case "reload":
-                                    plugin.reloadConfig();
-                                    break;
-                                case "set":
-                                    if(args.length == 4) {
-                                        Player player = plugin.getServer().getPlayer(args[2]);
-                                        if(player == null) {
-                                            sendLine(p, config.getString("messages.player-not-online"));
+            if(args.length >= 1) {
+                switch (args[0]) {
+                    case "help":
+                    case "?":
+                        sendHelp(p);
+                        break;
+                    case "over":
+                    case "about":
+                        p.sendMessage("§aLoan plugin by maartenvr98\nhttps://www.spigotmc.org/members/maartenvr98.88681/");
+                        break;
+                    case "admin":
+                        if(p.hasPermission("loan.admin") || p.isOp()) {
+                            if(args.length == 1) {
+                                sendAdminHelp(p);
+                            }
+                            else {
+                                switch (args[1]) {
+                                    case "help":
+                                    case "?":
+                                        sendAdminHelp(p);
+                                    case "reload":
+                                        plugin.reloadConfig();
+                                        sendLine(p, config.getString("messages.reload"));
+                                        break;
+                                    case "overview":
+                                    case "overzicht":
+                                        if(args.length == 2) {
+                                            sendLine(p, config.getString("messages.loan-overview-header"));
+                                            List<String> loans = (List<String>) config.getList("loans");
                                         }
                                         else {
-                                            if(!isInteger(args[3])) {
-                                                sendLine(p, config.getString("messages.invalid"));
+                                            Player player = plugin.getServer().getPlayer(args[2]);
+                                            if(player == null) {
+                                                sendLine(p, config.getString("messages.player-not-online"));
                                             }
                                             else {
-                                                String path = "loans."+player.getUniqueId();
-                                                if(!config.isSet(path)) {
-                                                    EconomyResponse response = econ.depositPlayer(player, parseDouble(args[3]));
-                                                    if(response.transactionSuccess()) {
-                                                        config.set(path+".amount", parseDouble(args[3]));
-                                                        config.set(path+".time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                                                        plugin.saveConfig();
-                                                        sendLine(p, config.getString("messages.loan-set").replace("{player}", player.getName()));
-                                                        sendLine(player, config.getString("messages.success").replace("{loan_amount}", args[3]));
-                                                    }
-                                                    else {
-                                                        sendLine(p, response.errorMessage);
-                                                    }
-                                                }
-                                                else {
-                                                    sendLine(p, config.getString("messages.loan-set"));
+                                                sendLine(p, config.getString("messages.loan-overview-header"));
+                                                List<String> loans = (List<String>) config.getList("loans"+p.getUniqueId()+".history");
+                                                for (String loan: loans) {
+                                                    String[] items = loan.split(":");
+                                                    sendLine(p, config.getString("messages.loan-overview-line-player").replace("{date}", items[0]).replace("{amount}", items[1]));
                                                 }
                                             }
                                         }
-                                    }
-                                    else {
-                                        sendLine(p, config.getString("messages.invalid"));
-                                    }
-                                    break;
-                                case "remove":
-                                    if(args.length == 3) {
-                                        Player player = plugin.getServer().getPlayer(args[2]);
-                                        if(player == null) {
-                                            sendLine(p, config.getString("messages.player-not-online"));
+                                        break;
+                                    case "set":
+                                        if(args.length == 4) {
+                                            Player player = plugin.getServer().getPlayer(args[2]);
+                                            if(player == null) {
+                                                sendLine(p, config.getString("messages.player-not-online"));
+                                            }
+                                            else {
+                                                if(!isInteger(args[3])) {
+                                                    sendLine(p, config.getString("messages.invalid"));
+                                                }
+                                                else {
+                                                    String path = "loans."+player.getUniqueId();
+                                                    if(!config.isSet(path)) {
+                                                        EconomyResponse response = econ.depositPlayer(player, parseDouble(args[3]));
+                                                        if(response.transactionSuccess()) {
+                                                            config.set(path+".amount", parseDouble(args[3]));
+                                                            config.set(path+".time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                                                            plugin.saveConfig();
+                                                            sendLine(p, config.getString("messages.loan-set").replace("{player}", player.getName()));
+                                                            sendLine(player, config.getString("messages.success").replace("{loan_amount}", args[3]));
+                                                        }
+                                                        else {
+                                                            sendLine(p, response.errorMessage);
+                                                        }
+                                                    }
+                                                    else {
+                                                        sendLine(p, config.getString("messages.loan-set"));
+                                                    }
+                                                }
+                                            }
                                         }
                                         else {
-                                            config.set("loans."+player.getUniqueId(), null);
-                                            plugin.saveConfig();
-                                            sendLine(player, config.getString("messages.loan-remitted"));
-                                            sendLine(p, config.getString("messages.loan-removed"));
+                                            sendLine(p, config.getString("messages.invalid"));
                                         }
-                                    }
-                                    else {
-                                        sendLine(p, config.getString("messages.invalid"));
-                                    }
-                                    break;
-                                default:
-                                    sendAdminHelp(p);
+                                        break;
+                                    case "remove":
+                                        if(args.length == 3) {
+                                            Player player = plugin.getServer().getPlayer(args[2]);
+                                            if(player == null) {
+                                                sendLine(p, config.getString("messages.player-not-online"));
+                                            }
+                                            else {
+                                                config.set("loans."+player.getUniqueId(), null);
+                                                plugin.saveConfig();
+                                                sendLine(player, config.getString("messages.loan-remitted"));
+                                                sendLine(p, config.getString("messages.loan-removed"));
+                                            }
+                                        }
+                                        else {
+                                            sendLine(p, config.getString("messages.invalid"));
+                                        }
+                                        break;
+                                    default:
+                                        sendAdminHelp(p);
+                                }
                             }
                         }
-                    }
-                    else {
-                        sendLine(p, config.getString("messages.no-permission"));
-                        return true;
-                    }
-                    break;
-                case "get":
-                case "aanvragen":
-                    if(args.length == 1) {
-                        sendLine(p, config.getString("messages.invalid"));
-                        return true;
-                    }
-                    else {
-                        if(!isInteger(args[1])) {
+                        else {
+                            sendLine(p, config.getString("messages.no-permission"));
+                            return true;
+                        }
+                        break;
+                    case "get":
+                    case "aanvragen":
+                        if(args.length == 1) {
                             sendLine(p, config.getString("messages.invalid"));
+                            return true;
                         }
                         else {
-                            loan.create(p, parseDouble(args[1]));
+                            if(!isInteger(args[1])) {
+                                sendLine(p, config.getString("messages.invalid"));
+                            }
+                            else {
+                                loan.create(p, parseDouble(args[1]));
+                            }
                         }
-                    }
-                    break;
-                case "refund":
-                case "afbetalen":
-                    if(args.length == 1) {
-                        sendLine(p, config.getString("messages.invalid"));
-                        return true;
-                    }
-                    else {
-                        if(!isInteger(args[1])) {
+                        break;
+                    case "refund":
+                    case "afbetalen":
+                        if(args.length == 1) {
                             sendLine(p, config.getString("messages.invalid"));
+                            return true;
                         }
                         else {
-                            refund.pay(p, parseDouble(args[1]));
+                            if(!isInteger(args[1])) {
+                                sendLine(p, config.getString("messages.invalid"));
+                            }
+                            else {
+                                refund.pay(p, parseDouble(args[1]));
+                            }
                         }
-                    }
-                    break;
-                default:
-                    String path = "loans."+p.getUniqueId();
-                    if(!config.isSet(path)) {
-                        sendLine(p, config.getString("messages.no-loan"));
-                    }
-                    else {
-                        String money = config.getString("loans."+p.getUniqueId()+".total");
-                        String money_left = config.getString("loans."+p.getUniqueId()+".amount");
-                        Double money_refund = parseDouble(money) - parseDouble(money_left);
-                        sendLine(p, config.getString("messages.loan").replace("{money}", money).replace("{money_left}", money_left).replace("{money_refund}", String.valueOf(money_refund)));
-                    }
+                        break;
+                    default:
+                        loan.get(p);
+                }
+            }
+            else {
+                loan.get(p);
             }
         }
         else {
