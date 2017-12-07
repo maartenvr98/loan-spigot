@@ -44,15 +44,15 @@ public class Main extends JavaPlugin {
 
         List<String> help = new ArrayList();
         help.add("&a/loan help");
-        help.add("&a/loan get <bedrag>");
-        help.add("&a/loan pay <bedrag>");
+        help.add("&a/loan get <amount>");
+        help.add("&a/loan pay <amount>");
         config.addDefault("messages.help", help);
 
         List<String> adminhelp = new ArrayList();
         adminhelp.add("&a/loan admin help");
-        adminhelp.add("&a/loan admin view <speler> (optional)");
-        adminhelp.add("&a/loan admin set <speler> <bedrag>");
-        adminhelp.add("&a/loan admin remove <speler>");
+        adminhelp.add("&a/loan admin view <player> (optional)");
+        adminhelp.add("&a/loan admin set <player> <amount>");
+        adminhelp.add("&a/loan admin remove <player>");
         config.addDefault("messages.adminhelp", adminhelp);
 
 
