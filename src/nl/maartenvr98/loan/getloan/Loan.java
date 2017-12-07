@@ -18,13 +18,13 @@ public class Loan {
 
     private Plugin plugin;
     private FileConfiguration config;
-    private Double maxloan;
+    private Integer maxloan;
     private Economy econ = null;
 
     public Loan(Plugin plugin, FileConfiguration config) {
         this.plugin = plugin;
         this.config = config;
-        maxloan = config.getDouble("maxloan");
+        maxloan = 1;
 
         if (!setupEconomy() ) {
             plugin.getLogger().info("Disabled due to no Vault dependency found!");

@@ -5,6 +5,6 @@ author: maartenvr98
 description: Loan plugin
 depend: [Vault]
 commands:
-  lening:
+  loan:
     description: Get a loan
-    usage: /lening <amount>
+    usage: /loan <amount>

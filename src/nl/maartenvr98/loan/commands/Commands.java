@@ -49,7 +49,6 @@ public class Commands implements CommandExecutor {
                     case "?":
                         sendHelp(p);
                         break;
-                    case "over":
                     case "about":
                         p.sendMessage("§aLoan plugin by maartenvr98\nhttps://www.spigotmc.org/members/maartenvr98.88681/");
                         break;
@@ -69,7 +68,7 @@ public class Commands implements CommandExecutor {
                                         sendLine(p, config.getString("messages.reload"));
                                         break;
                                     case "overview":
-                                    case "overzicht":
+                                    case "view":
                                         if(args.length == 2) {
                                             sendLine(p, config.getString("messages.loan-overview-header"));
                                             List<String> loans = (List<String>) config.getList("loans");
@@ -167,7 +166,6 @@ public class Commands implements CommandExecutor {
                         }
                         break;
                     case "get":
-                    case "aanvragen":
                         if(args.length == 1) {
                             sendLine(p, config.getString("messages.invalid"));
                             return true;
@@ -182,7 +180,7 @@ public class Commands implements CommandExecutor {
                         }
                         break;
                     case "refund":
-                    case "afbetalen":
+                    case "pay":
                         if(args.length == 1) {
                             sendLine(p, config.getString("messages.invalid"));
                             return true;

@@ -15,7 +15,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Plugin enabled");
         setupConfig();
-        getCommand("lening").setExecutor(new Commands(this, config));
+        getCommand("loan").setExecutor(new Commands(this, config));
     }
 
     @Override
@@ -24,41 +24,40 @@ public class Main extends JavaPlugin {
     }
 
     public void setupConfig() {
-        config.addDefault("limit", 1);
-        config.addDefault("maxloan", 1000);
-        config.addDefault("messages.reload", "&aConfig herladen");
-        config.addDefault("messages.limit", "&cJe kan niet meer dan 1 lening hebben");
-        config.addDefault("messages.maxloan", "&cJe kan niet meer dan 1000 lenen");
-        config.addDefault("messages.no-permission", "&cJe hebt geen toegang tot dit command");
+        config.addDefault("maxloan", 10000);
+        config.addDefault("messages.reload", "&aConfig reloaed");
+        config.addDefault("messages.limit", "&cYou cannot have more than 1 loan");
+        config.addDefault("messages.maxloan", "&cYou cannot borrow more than 10000");
+        config.addDefault("messages.no-permission", "&cYou don't have access to this command");
         config.addDefault("messages.invalid", "&cInvalid arguments");
-        config.addDefault("messages.success", "&aLening van {loan_amount} ontvangen");
-        config.addDefault("messages.no-loan", "&aJe hebt geen lening");
+        config.addDefault("messages.success", "&aLoan received of {loan_amount}");
+        config.addDefault("messages.no-loan", "&aYou do not have a loan");
         config.addDefault("messages.loan", "&aJe hebt een lening van {money} en je hebt al {money_refund} afbetaald en je moet nog {money_left} betalen");
-        config.addDefault("messages.paid", "&aJe hebt {amount} betaald");
-        config.addDefault("messages.fullpaid", "&aGefeliciteerd. Je hebt lening afbetaald!");
-        config.addDefault("messages.has-loan", "&cDeze speler heeft al een lening");
-        config.addDefault("messages.player-not-online", "&cDeze speler is niet online");
-        config.addDefault("messages.loan-loan-set", "&aLening gegeven aan {player}");
-        config.addDefault("messages.loan-remitted", "&aJe lening is kwijtgescholden");
-        config.addDefault("messages.loan-removed", "&aLening is verwijderd");
-        config.addDefault("messages.no-loan-player", "&aDeze speler heeft geen leningen");
+        config.addDefault("messages.paid", "&aYou have paid {amount}");
+        config.addDefault("messages.fullpaid", "&Congrats. You have paid off your loan!");
+        config.addDefault("messages.has-loan", "&cThis player does not have a loan");
+        config.addDefault("messages.player-not-online", "&cThis player isn't online");
+        config.addDefault("messages.loan-loan-set", "&aloan gived to {player}");
+        config.addDefault("messages.loan-remitted", "&aYour loan is remitted");
+        config.addDefault("messages.loan-removed", "&aLoan is removed");
+        config.addDefault("messages.no-loan-player", "&aThis player does not have loans");
 
         List<String> help = new ArrayList();
-        help.add("&a/lening help");
-        help.add("&a/lening aanvragen <bedrag>");
-        help.add("&a/lening afbetalen <bedrag>");
+        help.add("&a/loan help");
+        help.add("&a/loan get <bedrag>");
+        help.add("&a/loan pay <bedrag>");
         config.addDefault("messages.help", help);
 
         List<String> adminhelp = new ArrayList();
-        adminhelp.add("&a/lening admin help");
-        adminhelp.add("&a/lening admin overzicht <speler> (optionee;)");
-        adminhelp.add("&a/lening admin set <speler> <bedrag>");
-        adminhelp.add("&a/lening admin remove <speler>");
+        adminhelp.add("&a/loan admin help");
+        adminhelp.add("&a/loan admin view <speler> (optional)");
+        adminhelp.add("&a/loan admin set <speler> <bedrag>");
+        adminhelp.add("&a/loan admin remove <speler>");
         config.addDefault("messages.adminhelp", adminhelp);
 
 
-        config.addDefault("messages.loan-overview-header", "&7------&aAlle leningen&7------");
-        config.addDefault("messages.loan-overview-line", "&a{player} heeft een lening van {amount}");
+        config.addDefault("messages.loan-overview-header", "&7------&aAll loans&7------");
+        config.addDefault("messages.loan-overview-line", "&a{player} has a loan of {amount}");
         config.addDefault("messages.loan-overview-line-player", "&a{date}: {amount}");
 
         config.options().copyDefaults(true);
