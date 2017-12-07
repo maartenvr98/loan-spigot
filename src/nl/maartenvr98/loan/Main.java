@@ -32,7 +32,7 @@ public class Main extends JavaPlugin {
         config.addDefault("messages.invalid", "&cInvalid arguments");
         config.addDefault("messages.success", "&aLoan received of {loan_amount}");
         config.addDefault("messages.no-loan", "&aYou do not have a loan");
-        config.addDefault("messages.loan", "&aJe hebt een lening van {money} en je hebt al {money_refund} afbetaald en je moet nog {money_left} betalen");
+        config.addDefault("messages.loan", "&aYou have a loan of {money} and you have paid {money_refund}. You need to pay {money_left} to pay off your loan");
         config.addDefault("messages.paid", "&aYou have paid {amount}");
         config.addDefault("messages.fullpaid", "&Congrats. You have paid off your loan!");
         config.addDefault("messages.has-loan", "&cThis player does not have a loan");
